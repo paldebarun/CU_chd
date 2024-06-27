@@ -24,9 +24,13 @@ databaseConnect();
 const {cloudinaryConnect} =require('../server/configurations/cloudinaryConnect');
 cloudinaryConnect();
 
-//user routes
-const userRoute = require("./routes/userRoute");
-app.use("/api/user", userRoute);
+//central office user routes
+const CentralOfficeRoutes = require("./routes/CentralOfficeRoutes");
+app.use("/api/centraloffice", CentralOfficeRoutes);
+
+//student representative routes
+const studentRepresentativeRoutes = require('./routes/studentRepresentativeRoutes');
+app.use('/api/studentrepresentative',studentRepresentativeRoutes);
 
 //the application listening 
 app.listen(process.env.PORT,()=>console.log(`the server is listening at ${process.env.PORT}`));
