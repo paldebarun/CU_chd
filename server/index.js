@@ -32,5 +32,20 @@ app.use("/api/centraloffice", CentralOfficeRoutes);
 const studentRepresentativeRoutes = require('./routes/studentRepresentativeRoutes');
 app.use('/api/studentrepresentative',studentRepresentativeRoutes);
 
+//club routes
+const clubroutes=require('./routes/ClubRoutes');
+app.use('/api/clubroutes',clubroutes);
+
+//faculty advisor routes
+const facultyadvisorRoutes=require('./routes/FacultyAdvisorRoutes');
+app.use('/api/facultyadvisorRoutes',facultyadvisorRoutes);
+
+//event routes
+const eventRoutes=require('./routes/EvenTRoutes');
+app.use('/apo/eventroutes',eventRoutes);
+
+
+
+
 //the application listening 
 app.listen(process.env.PORT,()=>console.log(`the server is listening at ${process.env.PORT}`));

@@ -43,52 +43,70 @@ exports.createStudentRepresentativeUser = async (req, res) => {
 
   exports.updateStudentRepresentativeUser = async (req, res) => {
     try {
-      const { id } = req.params;
-      const {newid, name, email, department } = req.body;
+      const { id } = req.params; // This is the custom ID
+      const { newid, name, email, department } = req.body;
+    
+      // Find the user by custom ID
+      const user = await StudentRepresentativeUser.findOne({ id });
   
-      const updatedUser = await StudentRepresentativeUser.findByIdAndUpdate(
-        id,
-        { id:newid,name, email, department },
-        { new: true, runValidators: true }
-      );
-  
-      if (!updatedUser) {
-        return res.status(404).json({ message: "User not found" });
+      // If the user doesn't exist, send a 404 response
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
       }
   
+      // Update user details
+      user.id = newid || user.id;
+      user.name = name || user.name;
+      user.email = email || user.email;
+      user.department = department || user.department;
+  
+      // Save the updated user
+      const updatedUser = await user.save();
+  
+      // Send a success response with the updated user
       res.status(200).json({
         type: "Student Representative User updated successfully",
-        success:true,
+        success: true,
         updatedUser
       });
     } catch (error) {
-      res.status(500).json({ 
-        success:false,
-        message: error.message });
+      // Handle errors and send an error response
+      res.status(500).json({
+        success: false,
+        message: error.message
+      });
     }
   };
+  
 
 
-
-
-exports.deleteStudentRepresentativeUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const deletedUser = await StudentRepresentativeUser.findByIdAndDelete(id);
-
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+  exports.deleteStudentRepresentativeUser = async (req, res) => {
+    try {
+      const { id } = req.params; // This is the custom ID
+  
+      // Find the user by custom ID
+      const user = await StudentRepresentativeUser.findOne({ id });
+  
+      // If the user doesn't exist, send a 404 response
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      // Delete the user
+      await user.remove();
+  
+      // Send a success response with the deleted user details
+      res.status(200).json({
+        type: "Student Representative User",
+        success: true,
+        deletedUser: user
+      });
+    } catch (error) {
+      // Handle errors and send an error response
+      res.status(500).json({
+        success: false,
+        message: error.message
+      });
     }
-
-    res.status(200).json({
-      type: "Student Representative User",
-      success:true,
-      deletedUser
-    });
-  } catch (error) {
-    res.status(500).json({ 
-        success:false,
-        message: error.message });
-  }
-};
+  };
+  

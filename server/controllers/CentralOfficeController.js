@@ -56,59 +56,65 @@ exports.updateCentralOfficeUser = async (req, res) => {
     // Destructure the user details from the request body
     const { name, email, newid } = req.body;
     
-    // Find the user by ID and update their details
-    const updatedUser = await CentralOfficeUser.findByIdAndUpdate(
-      req.params.id,
-      {
-        name,
-        email,
-        id:newid
-      },
-      { new: true, runValidators: true }
-    );
+    // Find the user by custom ID
+    const user = await CentralOfficeUser.findOne({ id: req.params.id });
 
     // If the user doesn't exist, send a 404 response
-    if (!updatedUser) {
-      return res.status(404).json({ success:false,message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    // Send a success response with the updated user
+    // Updates user details
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.id = newid || user.id;
+
+    // Saves the updated user
+    const updatedUser = await user.save();
+
+    // Sends a success response with the updated user
     res.status(200).json({
       message: "Central Office User updated successfully",
-      success:true,
+      success: true,
       updatedUser
     });
   } catch (error) {
     // Handle errors and send an error response
     res.status(500).json({ 
-      success:false,
-      message: error.message });
+      success: false,
+      message: error.message 
+    });
   }
 };
 
 
 
 
+
 exports.deleteCentralOfficeUser = async (req, res) => {
   try {
-    // Find the user by ID and delete them
-    const deletedUser = await CentralOfficeUser.findByIdAndDelete(req.params.id);
+    // Find the user by custom ID
+    const user = await CentralOfficeUser.findOne({ id: req.params.id });
 
     // If the user doesn't exist, send a 404 response
-    if (!deletedUser) {
-      return res.status(404).json({ message: "User not found" });
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
     }
+
+    // Delete the user
+    await user.remove();
 
     // Send a success response with the deleted user details
     res.status(200).json({
       message: "Central Office User deleted successfully",
-      success:true,
-      deletedUser
+      success: true,
+      deletedUser: user
     });
   } catch (error) {
     // Handle errors and send an error response
     res.status(500).json({ 
-      success:false,
-      message: error.message });
+      success: false,
+      message: error.message 
+    });
   }
 };

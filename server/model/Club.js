@@ -5,10 +5,6 @@ const ClubSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  facultyAdvisor: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "FacultyAdvisor" 
-  },
   Events:[
    { 
     type:mongoose.Schema.Types.ObjectId,
