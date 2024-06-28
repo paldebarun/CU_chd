@@ -7,6 +7,17 @@ require('dotenv').config();
 //configuring json formate usage
 app.use(express.json());
 
+//file upload configurations
+const fileupload = require("express-fileupload");
+app.use(fileupload({
+    useTempFiles : true,
+    tempFileDir : '/tmp/'
+}));
+
+//connecting cloudinary
+const cloudinary = require("./configurations/cloudinaryConnect");
+cloudinary.cloudinaryConnect();
+
 //importing and configuring the cors libray the handle the CORS error situation
 const cors = require('cors');
 
@@ -42,7 +53,11 @@ app.use('/api/facultyadvisorRoutes',facultyadvisorRoutes);
 
 //event routes
 const eventRoutes=require('./routes/EvenTRoutes');
-app.use('/apo/eventroutes',eventRoutes);
+app.use('/api/eventroutes',eventRoutes);
+
+//image upload 
+const imageUploadRoutes=require('./routes/FileUploadRoutes');
+app.use('/api/imageupload',imageUploadRoutes);
 
 
 
