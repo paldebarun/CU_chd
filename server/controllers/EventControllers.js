@@ -1,10 +1,20 @@
 const Event = require('../model/Event'); 
 const Club = require('../model/Club'); 
-
+const  {imageUpload} = require('../controllers/UplaodToCloudinary');
 exports.createEvent = async (req, res) => {
   try {
-    const { name, images, description, featured, clubName, organizer, dateofevent } = req.body;
+    const { name, description, featured, clubName, organizer, dateofevent } = req.body;
 
+    const uploadResult = await imageUpload(req);
+    if (!uploadResult.success) {
+      return res.status(400).json({
+        success: false,
+        message: uploadResult.message,
+      });
+    }
+
+    const imageURL = uploadResult.imageUrl;
+    const images= [imageURL];
     // Create a new event
     const newEvent = new Event({
       name,
@@ -18,7 +28,6 @@ exports.createEvent = async (req, res) => {
 
     // Save the event to get the _id
     await newEvent.save();
-
     // Find the associated Club by name and update its events array and set the club field in the event
     const club = await Club.findOneAndUpdate(
       { name: clubName },

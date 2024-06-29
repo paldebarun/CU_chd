@@ -45,12 +45,12 @@ function isFileTypeSupported(type, supportedTypes) {
       });
  
  
-         return res.json({
+         return {
           success:true,
           imageUrl:response.secure_url,
           message:'Image Successfully Uploaded',
           
-      });
+      };
     }
     catch(error){
        console.error(error);

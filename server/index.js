@@ -54,13 +54,11 @@ app.use('/api/facultyadvisorRoutes',facultyadvisorRoutes);
 //event routes
 const eventRoutes=require('./routes/EvenTRoutes');
 app.use('/api/eventroutes',eventRoutes);
-<<<<<<< HEAD
-=======
+
 
 //image upload 
 const imageUploadRoutes=require('./routes/FileUploadRoutes');
 app.use('/api/imageupload',imageUploadRoutes);
->>>>>>> origin/main
 
 
 
