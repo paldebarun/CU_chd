@@ -18,22 +18,21 @@ exports.getAllStudentRepresentativeUsers = async (req, res) => {
 
 exports.createStudentRepresentativeUser = async (req, res) => {
     try {
-      const { name, id, email, department } = req.body;
+      const { Studentname, email, department } = req.body;
   
       const newUser = new StudentRepresentativeUser({
-        name,
-        id,
+        name:Studentname,
         email,
+        password:email,
         department
       });
   
       const savedUser = await newUser.save();
   
-      res.status(201).json({
-        message: "Student Representative User created successfully",
-        success:true,
+     return{
+        
         savedUser
-      });
+      };
     } catch (error) {
       res.status(500).json({ 
         success:false,
