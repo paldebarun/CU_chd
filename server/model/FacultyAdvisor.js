@@ -5,18 +5,13 @@ const FacultyAdvisorSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  id: {
-    type: String,
-    required: true,
-  },
   email: {
     type: String,
     required: true,
   },
-  club: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Club", 
-    required: true,
+  password:{
+    type:String,
+    required: true
   }
 }, {
   timestamps: true

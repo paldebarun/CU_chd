@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const facultyAdvisorController = require('../controllers/FacultyAdvisorControllers'); 
-
+const studentRepresentativeMiddleware = require('../middlewares/studentrepresentative');
 // POST /api/faculty-advisors
-router.post('/faculty-advisors', facultyAdvisorController.createFacultyAdvisor);
+router.post('/faculty-advisors', studentRepresentativeMiddleware,facultyAdvisorController.createFacultyAdvisor);
 
 // GET /api/faculty-advisors
 router.get('/faculty-advisors', facultyAdvisorController.getAllFacultyAdvisors);

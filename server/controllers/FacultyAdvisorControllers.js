@@ -3,26 +3,37 @@ const Club = require('../model/Club');
 
 exports.createFacultyAdvisor = async (req, res) => {
   try {
-    const { name, id, email, clubName } = req.body;
+    const { name,email,clubName } = req.body;
 
     // Find the club by name
-    const club = await Club.findOne({ name: clubName });
-
-    // If the club doesn't exist, send a 404 response
-    if (!club) {
-      return res.status(404).json({ success: false, message: "Club not found" });
+    const password= email;
+    const existing = await FacultyAdvisor.findOne({email});
+    if(existing){
+      res.status(400).json({
+        message: "The current faculty advisor is already managing another club.",
+        success:false
+      });
+      return;
     }
 
     // Create a new Faculty Advisor
     const newFacultyAdvisor = new FacultyAdvisor({
       name,
-      id,
       email,
-      club: club._id
+      password
     });
 
     // Save the Faculty Advisor
     await newFacultyAdvisor.save();
+
+    const club = await Club.findOneAndUpdate({ name: clubName },{FacultyAdvisor: newFacultyAdvisor._id });
+
+    // If the club doesn't exist, send a 404 response
+    if (!club) {
+      return res.status(404).json({ success: false, message: "Club not found" });
+    }
+    await newFacultyAdvisor.save();
+
 
     // Send a success response with the new Faculty Advisor
     res.status(201).json({

@@ -8,7 +8,7 @@ const {highlightedEventsRecent} = require('../controllers/highlightedEventsRecen
 router.post('/events', studentRepresentativeMiddleware,eventController.createEvent);
 
 // DELETE /events/:name - Delete an event by name
-router.delete('/events/:name', eventController.deleteEvent);
+router.delete('/events/:name',studentRepresentativeMiddleware, eventController.deleteEvent);
 
 router.get('/highlightedEventsRecent',highlightedEventsRecent);
 
