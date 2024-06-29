@@ -27,6 +27,10 @@ const EventSchema = new mongoose.Schema({
   type:String,
   require:true
   },
+  approved:{
+    type:Boolean,
+    default:false
+  },
   dateofevent: {
     type: Date, 
     required: true, 

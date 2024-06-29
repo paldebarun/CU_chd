@@ -8,7 +8,7 @@ exports.highlightedEventsRecent = async (req,res)=>{
 const events = await Event.find({featured:true,dateofevent:{
     $gte: currDate,
     $lte: oneWeekLater
-}});
+},approved:true});
 const eventList = events.map(event=>({
     name: event.name,
     description: event.description,
