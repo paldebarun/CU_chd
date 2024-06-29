@@ -42,7 +42,7 @@ app.use('/api/facultyadvisorRoutes',facultyadvisorRoutes);
 
 //event routes
 const eventRoutes=require('./routes/EvenTRoutes');
-app.use('/apo/eventroutes',eventRoutes);
+app.use('/api/eventroutes',eventRoutes);
 
 
 
