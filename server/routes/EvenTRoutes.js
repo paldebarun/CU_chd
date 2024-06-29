@@ -1,9 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const eventController = require('../controllers/EventControllers'); // Adjust the path as needed
+const eventController = require('../controllers/EventControllers'); 
+const studentRepresentativeMiddleware = require('../middlewares/studentrepresentative');
+
 const {highlightedEventsRecent} = require('../controllers/highlightedEventsRecent');
 // POST /events - Create a new event
-router.post('/events', eventController.createEvent);
+router.post('/events', studentRepresentativeMiddleware,eventController.createEvent);
 
 // DELETE /events/:name - Delete an event by name
 router.delete('/events/:name', eventController.deleteEvent);

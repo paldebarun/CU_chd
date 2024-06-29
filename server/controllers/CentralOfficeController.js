@@ -23,13 +23,12 @@ exports.getAllCentralOfficeUsers = async (req, res) => {
 exports.createCentralOfficeUser = async (req, res) => {
   try {
     // Destructure the user details from the request body
-    const { name, email, id } = req.body;
+    const { name, email } = req.body;
     
     // Create a new user instance
     const newUser = new CentralOfficeUser({
       name,
-      email,
-      id
+      email
     });
 
     // Save the user to the database

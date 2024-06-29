@@ -1,7 +1,7 @@
 const Club = require('../model/Club'); 
 const {createStudentRepresentativeUser} = require('../controllers/studentRepresentativeControllers');
 //Create a Club
-exports.createClub = async (req, res) => {
+exports.createClub = async (req,res) => {
   try {
     const { name } = req.body;
     const { savedUser } = await createStudentRepresentativeUser(req);
