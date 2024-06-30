@@ -59,3 +59,27 @@ exports.unapprovedEvents = async (req,res)=>{
         });
     }
 }
+
+exports.approveEvent= async (req,res)=>{
+    try{
+        const id = req.params.id;
+        const event = await Event.findByIdAndUpdate(
+            id,
+            {approved:true },
+            { new: true }
+          );
+          res.status(201).json({
+            message: "Event approved!!",
+            success: true,
+            event
+          });
+    }
+    catch(error){
+        console.error("Error fetching highlighted events:", error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error',
+            error 
+        });
+    }
+}
