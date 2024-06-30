@@ -1,13 +1,16 @@
 const express=require("express");
 const routes=express.Router();
 
-const {createCentralOfficeUser,updateCentralOfficeUser,deleteCentralOfficeUser,getAllCentralOfficeUsers} =require('../controllers/CentralOfficeController');
+const {createCentralOfficeUser,updateCentralOfficeUser,deleteCentralOfficeUser,getAllCentralOfficeUsers,loginCentralOfficeUser} =require('../controllers/CentralOfficeController');
 
 //fetching the central office users present
 routes.get('/fetchallusers',getAllCentralOfficeUsers);
 
 //route creating user
 routes.post("/createUser",createCentralOfficeUser);
+
+//route logging in 
+routes.post("/login",loginCentralOfficeUser);
 
 //updating user
 routes.put("/updateUser/:id",updateCentralOfficeUser);

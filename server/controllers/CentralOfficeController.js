@@ -1,4 +1,6 @@
 const CentralOfficeUser = require('../model/centralOfficeUser');
+require('dotenv').config();
+const bcrypt = require("bcrypt");
 
 
 exports.getAllCentralOfficeUsers = async (req, res) => {
@@ -24,11 +26,15 @@ exports.createCentralOfficeUser = async (req, res) => {
   try {
     // Destructure the user details from the request body
     const { name, email } = req.body;
-    
+    const saltRounds = parseInt(process.env.SALTROUNDS, 10);
+
+    const hash = await bcrypt.hash(email, saltRounds);
+
     // Create a new user instance
     const newUser = new CentralOfficeUser({
       name,
-      email
+      email,
+      password:hash
     });
 
     // Save the user to the database
@@ -48,6 +54,42 @@ exports.createCentralOfficeUser = async (req, res) => {
   }
 };
 
+exports.loginCentralOfficeUser = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    const user = await CentralOfficeUser.findOne({ email });
+
+    // If the user doesn't exist, send a 404 response
+    if (!user) {
+      return res.status(404).json({ 
+        success: false, 
+        message: "User not found" 
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    // If the passwords don't match, send a 401 response
+    if (!isMatch) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid credentials" 
+      });
+    }
+
+    res.status(200).json({
+      message: "Login successful",
+      success: true,
+      user
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
 
 
 exports.updateCentralOfficeUser = async (req, res) => {
