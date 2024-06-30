@@ -31,3 +31,31 @@ res.status(200).json(eventList);
     });
 }
 };
+exports.unapprovedEvents = async (req,res)=>{
+    try{
+    const FacultyAdvisor = req.headers.userid;
+    const clubDetails = await Club.findOne({FacultyAdvisor})
+    const club = clubDetails._id;
+
+    const events = await Event.find({approved:false,club});
+    const eventList = await Promise.all(events.map(async (event) => {
+        const club = await Club.findById(event.club);
+        return {
+            name: event.name,
+            description: event.description,
+            images: event.images,
+            clubName: club ? club.name : "Unknown Club", // Handle case where club is not found
+            organizer: event.organizer
+        };
+    }));
+    
+    res.status(200).json(eventList);
+    } catch (error) {
+        console.error("Error fetching highlighted events:", error);
+        res.status(500).json({ 
+            success: false,
+            message: 'Server error',
+            error 
+        });
+    }
+}

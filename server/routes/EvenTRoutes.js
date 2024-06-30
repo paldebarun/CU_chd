@@ -1,9 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const eventController = require('../controllers/EventControllers'); 
+const facultyAdvisorMiddleware = require('../middlewares/facultyadvisor');
 const studentRepresentativeMiddleware = require('../middlewares/studentrepresentative');
 
-const {highlightedEventsRecent} = require('../controllers/highlightedEventsRecent');
+const {highlightedEventsRecent,unapprovedEvents} = require('../controllers/highlightedEventsRecent');
 // POST /events - Create a new event
 router.post('/events', studentRepresentativeMiddleware,eventController.createEvent);
 
@@ -14,5 +15,8 @@ router.post("/register/:id",eventController.register);
 router.delete('/events/:name',studentRepresentativeMiddleware, eventController.deleteEvent);
 
 router.get('/highlightedEventsRecent',highlightedEventsRecent);
+
+router.get('/unapproved',facultyAdvisorMiddleware,unapprovedEvents);
+
 
 module.exports = router;

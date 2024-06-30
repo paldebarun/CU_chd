@@ -1,11 +1,11 @@
-const StudentRepresentativeUser = require('../model/StudentRepresentative');
+const FacultyAdvisor = require('../model/FacultyAdvisor');
 
 
-function studentRepresentativeMiddleware(req, res, next) {
+function facultyAdvisorMiddleware(req, res, next) {
     // Implement user auth logic
     // You need to check the headers and validate the user from the user DB. Check readme for the exact headers to be expected
     const username = req.headers.userid;
-    StudentRepresentativeUser.findOne({
+    FacultyAdvisor.findOne({
         _id:username,
     }).then(function(value){
         if(value){
@@ -20,4 +20,4 @@ function studentRepresentativeMiddleware(req, res, next) {
 }
 
 
-module.exports = studentRepresentativeMiddleware;
+module.exports = facultyAdvisorMiddleware;
