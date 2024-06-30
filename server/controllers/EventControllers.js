@@ -1,5 +1,6 @@
 const Event = require('../model/Event'); 
 const Club = require('../model/Club'); 
+const Ticket = require('../model/Ticket');
 const  {imageUpload} = require('../controllers/UplaodToCloudinary');
 exports.createEvent = async (req, res) => {
   try {
@@ -58,7 +59,33 @@ exports.createEvent = async (req, res) => {
     });
   }
 };
+exports.register = async (req,res)=>{
+  try{
+    const { UID, StudentName , email , phoneNumber }= req.body;
+    const event = req.params.id;
+    const newTicket = new Ticket({
+      UID,
+      StudentName,
+      email,
+      phoneNumber,
+      event,
+      
+    });
+    await newTicket.save();
+    res.status(201).json({
+      message: "Ticket booked successfully",
+      success: true,
+      newTicket
+    });
 
+  }
+  catch(error){
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+}
 exports.deleteEvent = async (req, res) => {
     try {
       const eventName = req.params.name; // Assuming event name is passed as a URL parameter
