@@ -34,6 +34,10 @@ const EventSchema = new mongoose.Schema({
   dateofevent: {
     type: Date, 
     required: true, 
+  },
+  seats:{
+    type: Number,
+    required: true
   }
 },
 {

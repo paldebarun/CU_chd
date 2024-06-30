@@ -2,9 +2,10 @@ const Event = require('../model/Event');
 const Club = require('../model/Club'); 
 const Ticket = require('../model/Ticket');
 const  {imageUpload} = require('../controllers/UplaodToCloudinary');
+const { findById } = require('../model/centralOfficeUser');
 exports.createEvent = async (req, res) => {
   try {
-    const { name, description, featured, clubName, organizer, dateofevent } = req.body;
+    const { name, description, featured, organizer, dateofevent , seats } = req.body;
 
     const uploadResult = await imageUpload(req);
     if (!uploadResult.success) {
@@ -13,7 +14,9 @@ exports.createEvent = async (req, res) => {
         message: uploadResult.message,
       });
     }
-
+    const studentRep = req.headers.userid;
+    const clubN = await Club.findOne({studentRepresentative: studentRep});
+    const clubId = clubN._id;
     const imageURL = uploadResult.imageUrl;
     const images= [imageURL];
     // Create a new event
@@ -24,25 +27,24 @@ exports.createEvent = async (req, res) => {
       featured,
       club: null, // Initialize club as null before update
       organizer,
-      dateofevent
+      dateofevent,
+      seats
     });
 
     // Save the event to get the _id
     await newEvent.save();
     // Find the associated Club by name and update its events array and set the club field in the event
     const club = await Club.findOneAndUpdate(
-      { name: clubName },
+      { _id: clubId },
       { $push: { events: newEvent._id } },
       { new: true }
     );
 
     // If the club doesn't exist, send a 404 response
-    if (!club) {
-      return res.status(404).json({ success: false, message: "Club not found" });
-    }
+
 
     // Update the event's club field with the club's _id
-    newEvent.club = club._id;
+    newEvent.club = clubId;
     await newEvent.save(); // Save the event again to update the club field
 
     // Send a success response with the newly created event
@@ -63,20 +65,35 @@ exports.register = async (req,res)=>{
   try{
     const { UID, StudentName , email , phoneNumber }= req.body;
     const event = req.params.id;
-    const newTicket = new Ticket({
-      UID,
-      StudentName,
-      email,
-      phoneNumber,
-      event,
-      
-    });
-    await newTicket.save();
-    res.status(201).json({
-      message: "Ticket booked successfully",
-      success: true,
-      newTicket
-    });
+    const eventDetails = await Event.findById(event);
+    if(eventDetails.seats > 0){
+      const newTicket = new Ticket({
+        UID,
+        StudentName,
+        email,
+        phoneNumber,
+        event,
+        
+      });
+      await newTicket.save();
+      await Event.findOneAndUpdate(
+        { _id: event },
+        {seats: eventDetails.seats-1 },
+        { new: true }
+      );
+      res.status(201).json({
+        message: "Ticket booked successfully",
+        success: true,
+        newTicket
+      });
+    }
+    else{
+      res.status(401).json({
+        success:false,
+        message: "Seats are filled sorry."
+      })
+    }
+   
 
   }
   catch(error){
