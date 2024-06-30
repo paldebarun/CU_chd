@@ -4,7 +4,7 @@ const {createStudentRepresentativeUser} = require('../controllers/studentReprese
 exports.createClub = async (req,res) => {
   try {
     const { name } = req.body;
-    const existing = await Club.find(name);
+    const existing = await Club.findOne({name});
     if(existing){
       res.status(401).json({
         success:false,
@@ -12,7 +12,15 @@ exports.createClub = async (req,res) => {
       })
       return;
     }
-    const { savedUser } = await createStudentRepresentativeUser(req);
+    const response = await createStudentRepresentativeUser(req);
+    if(response.success == false){
+      res.status(401).send({
+        message: "The current Student representative is already representing another club.",
+        success:false
+      })
+      return ;
+    }
+   const savedUser = response.savedUser;
     const newClub = new Club({ name ,studentRepresentative: savedUser._id    });
     await newClub.save();
     res.status(201).json({

@@ -21,11 +21,11 @@ exports.createStudentRepresentativeUser = async (req, res) => {
       const { Studentname, email, department } = req.body;
       const existing = await StudentRepresentativeUser.findOne({email});
       if(existing){
-        res.status(400).json({
+        return{
           message: "The current Student representative is already representing another club.",
           success:false
-        });
-        return;
+        };
+        
       }
       const newUser = new StudentRepresentativeUser({
         name:Studentname,
@@ -37,7 +37,7 @@ exports.createStudentRepresentativeUser = async (req, res) => {
       const savedUser = await newUser.save();
   
      return{
-        
+        success:true,
         savedUser
       };
     } catch (error) {
