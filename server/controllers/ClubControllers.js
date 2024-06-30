@@ -4,6 +4,14 @@ const {createStudentRepresentativeUser} = require('../controllers/studentReprese
 exports.createClub = async (req,res) => {
   try {
     const { name } = req.body;
+    const existing = await Club.find(name);
+    if(existing){
+      res.status(401).json({
+        success:false,
+        message:"There exists another club with same name. Please choose another name"
+      })
+      return;
+    }
     const { savedUser } = await createStudentRepresentativeUser(req);
     const newClub = new Club({ name ,studentRepresentative: savedUser._id    });
     await newClub.save();
@@ -57,6 +65,14 @@ exports.getClubs = async (req, res) => {
 
 exports.updateClub = async (req, res) => {
     try {
+      const existing = await Club.find(name);
+      if(existing && existing.id != req.params.id){
+        res.status(401).json({
+          success:false,
+          message:"There exists another club with same name. Please choose another name"
+        })
+        return;
+      }
       const { name } = req.body;
       const club = await Club.findById(req.params.id);
   
@@ -109,9 +125,9 @@ exports.getActiveClubs= async(req,res)=>{
     const clubs = await Club.aggregate([
       {
         $lookup: {
-          from: 'events', // The name of the events collection
+          from: 'events', 
           localField: '_id',
-          foreignField: 'club', // Assuming each event has a `clubId` field referencing the club
+          foreignField: 'club', 
           as: 'events'
         }
       },
