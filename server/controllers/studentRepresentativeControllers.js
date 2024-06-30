@@ -19,7 +19,14 @@ exports.getAllStudentRepresentativeUsers = async (req, res) => {
 exports.createStudentRepresentativeUser = async (req, res) => {
     try {
       const { Studentname, email, department } = req.body;
-  
+      const existing = await StudentRepresentativeUser.findOne({email});
+      if(existing){
+        res.status(400).json({
+          message: "The current Student representative is already representing another club.",
+          success:false
+        });
+        return;
+      }
       const newUser = new StudentRepresentativeUser({
         name:Studentname,
         email,
@@ -42,11 +49,18 @@ exports.createStudentRepresentativeUser = async (req, res) => {
 
   exports.updateStudentRepresentativeUser = async (req, res) => {
     try {
-      const { id } = req.params; // This is the custom ID
-      const { newid, name, email, department } = req.body;
-    
+      const { id } = req.params; 
+      const { name, email, department } = req.body;
+      const existing = await StudentRepresentativeUser.findOne({email});
+      if(existing && existing._id != id){
+        res.status(404).json({
+          success:false,
+          message:"There is another user with this email address"
+        });
+      }
+      else{
       // Find the user by custom ID
-      const user = await StudentRepresentativeUser.findOne({ id });
+      const user = await StudentRepresentativeUser.findById(id);
   
       // If the user doesn't exist, send a 404 response
       if (!user) {
@@ -54,7 +68,6 @@ exports.createStudentRepresentativeUser = async (req, res) => {
       }
   
       // Update user details
-      user.id = newid || user.id;
       user.name = name || user.name;
       user.email = email || user.email;
       user.department = department || user.department;
@@ -68,6 +81,7 @@ exports.createStudentRepresentativeUser = async (req, res) => {
         success: true,
         updatedUser
       });
+    }
     } catch (error) {
       // Handle errors and send an error response
       res.status(500).json({

@@ -102,4 +102,44 @@ exports.updateClub = async (req, res) => {
     }
   };
   
-  
+exports.getActiveClubs= async(req,res)=>{
+  try {
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const clubs = await Club.aggregate([
+      {
+        $lookup: {
+          from: 'events', // The name of the events collection
+          localField: '_id',
+          foreignField: 'club', // Assuming each event has a `clubId` field referencing the club
+          as: 'events'
+        }
+      },
+      {
+        $unwind: '$events'
+      },
+      {
+        $match: {
+          'events.dateofevent': { $gte: oneMonthAgo },
+          'events.approved':true
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          name: 1, 
+          events: 1
+        }
+      }
+    ]);
+    res.status(200).json({
+      success: true,
+      message: "Clubs with events in the past month fetched successfully",
+      clubs
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      success:false,
+      message: 'Server error', error });
+  }
+}  
