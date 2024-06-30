@@ -83,3 +83,33 @@ exports.approveEvent= async (req,res)=>{
         });
     }
 }
+exports.rejectEvent = async (req,res)=>{
+    try {
+        const eventName = req.params.id; // Assuming event name is passed as a URL parameter
+    
+        // Find the event by name
+        const event = await Event.findById(eventName);
+    
+        // If the event doesn't exist, send a 404 response
+        if (!event) {
+          return res.status(404).json({ success: false, message: "Event not found" });
+        }
+        
+            // Delete the event from the database
+
+        await Event.deleteOne({_id:eventName});
+    
+        // Send a success response
+        res.status(200).json({
+          message: "Event deleted successfully",
+          success: true,
+          deletedEvent: event
+        });
+      } catch (error) {
+        // Handle errors and send an error response
+        res.status(500).json({
+          success: false,
+          message: error.message
+        });
+      }
+}
