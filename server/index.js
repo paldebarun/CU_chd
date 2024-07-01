@@ -60,6 +60,9 @@ app.use('/api/eventroutes',eventRoutes);
 const imageUploadRoutes=require('./routes/FileUploadRoutes');
 app.use('/api/imageupload',imageUploadRoutes);
 
+const memberRoutes = require('./routes/memberRoutes');
+app.use('/api/member',memberRoutes);
+
 
 
 
