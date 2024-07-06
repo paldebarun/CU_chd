@@ -61,6 +61,20 @@ exports.createEvent = async (req, res) => {
     });
   }
 };
+exports.approvedevents = async (req,res)=>{
+  try{
+    const events = await Event.find({approved:true});
+    res.status(200).json({
+      success:true,
+      message:"Events fetched successfully",
+      events});
+  } catch (error) {
+    res.status(500).json({ 
+      success:false,
+      message: 'Server error', error });
+  }
+  }
+
 exports.register = async (req,res)=>{
   try{
     const { UID, StudentName , email , phoneNumber }= req.body;

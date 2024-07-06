@@ -15,6 +15,8 @@ router.post("/register/:id",eventController.register);
 router.delete('/events/:name',studentRepresentativeMiddleware, eventController.deleteEvent);
 
 router.get('/highlightedEventsRecent',highlightedEventsRecent);
+router.get('/events',eventController.approvedevents);
+
 
 router.get('/unapproved',facultyAdvisorMiddleware,unapprovedEvents);
 
