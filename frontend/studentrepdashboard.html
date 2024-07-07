@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clubs and Events</title>
+  <style>
+    li {
+      margin: 4em;
+    }
+    ul {
+      list-style-type: none;
+    }
+  </style>
+</head>
+<body>
+  <li>
+    <button id="addEventButton">Add an event</button>
+  </li>
+  <li>
+    <button id="addFaculty">Add a faculty</button>
+  </li>
+ 
+  <div id="lists"></div>
+  <div id="addFacultyform" style="display: none;">
+    <h2>Add faculty</h2>
+    <form id="facultyForm">
+        <label for="name">Name : </label>
+        <input type="text" name="name" id="name" required><br><br>
+        <label for="email">email : </label>
+        <input type="text" name="email" id="email" required><br><br>
+        <label for="clubName">club name</label>
+        <input type="text" name="clubName" id="clubName">
+        <button type="submit">Create faculty</button>
+    </form>
+  </div>
+  <div id="addEventForm" style="display: none;">
+    <h2>Add Event</h2>
+    <form id="eventForm">
+      <label for="eventName">Event Name:</label>
+      <input type="text" id="eventName" name="eventName" required><br><br>
+      <label for="eventDescription">Description:</label>
+      <input type="text" id="eventDescription" name="eventDescription" required><br><br>
+      <label for="eventFeatured">Featured:</label>
+      <input type="checkbox" id="eventFeatured" name="eventFeatured"><br><br>
+      <label for="eventOrganizer">Organizer:</label>
+      <input type="text" id="eventOrganizer" name="eventOrganizer" required><br><br>
+      <label for="eventDate">Date of Event:</label>
+      <input type="date" id="eventDate" name="eventDate" required><br><br>
+      <label for="eventSeats">Seats:</label>
+      <input type="number" id="eventSeats" name="eventSeats" required><br><br>
+      <label for="eventImage">Event Image:</label>
+      <input type="file" id="eventImage" name="eventImage" accept="image/*" required><br><br>
+      <button type="submit">Add Event</button>
+    </form>
+  </div>
+
+  <script>
+    document.getElementById('addFaculty').addEventListener('click',()=>{
+        document.getElementById('addFacultyform').style.display='block';
+    });
+    document.getElementById('facultyForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('name').value);
+      formData.append('email', document.getElementById('email').value);
+      formData.append('clubName', document.getElementById('clubName').value);
+
+      try {
+        console.log(formData);
+        const response = await fetch('http://localhost:8000/api/facultyadvisorRoutes/faculty-advisors', {
+          method: 'POST',
+          headers: {
+            'userid': '668a345bfcfde938fe99ac5b' // Replace with the actual user ID
+          },
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        alert(data.message);
+        if (data.success) {
+          document.getElementById('addFacultyform').style.display = 'none';
+          document.getElementById('addFacultyform').reset();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while adding the event: ' + error.message);
+      }
+    });
+
+    document.getElementById('addEventButton').addEventListener('click', () => {
+      document.getElementById('addEventForm').style.display = 'block';
+    });
+
+    document.getElementById('eventForm').addEventListener('submit', async (event) => {
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append('name', document.getElementById('eventName').value);
+      formData.append('description', document.getElementById('eventDescription').value);
+      formData.append('featured', document.getElementById('eventFeatured').checked);
+      formData.append('organizer', document.getElementById('eventOrganizer').value);
+      formData.append('dateofevent', document.getElementById('eventDate').value);
+      formData.append('seats', document.getElementById('eventSeats').value);
+      formData.append('imageFile', document.getElementById('eventImage').files[0]);
+
+      try {
+        console.log(formData);
+        const response = await fetch('http://localhost:8000/api/eventroutes/events', {
+          method: 'POST',
+          headers: {
+            'userid': '668a345bfcfde938fe99ac5b' // Replace with the actual user ID
+          },
+          body: formData
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        alert(data.message);
+        if (data.success) {
+          document.getElementById('addEventForm').style.display = 'none';
+          document.getElementById('eventForm').reset();
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('An error occurred while adding the event: ' + error.message);
+      }
+    });
+  </script>
+</body>
+</html>

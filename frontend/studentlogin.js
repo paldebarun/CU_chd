@@ -1,11 +1,11 @@
-document.getElementById('loginForm').addEventListener('submit', async (event) => {
+document.getElementById('studentreplogin').addEventListener('submit', async (event) => {
     event.preventDefault();
     
     const email = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     console.log(username + password);
 
-    const response = await fetch('http://localhost:8000/api/centraloffice/login', {
+    const response = await fetch('http://localhost:8000/api/studentrepresentative/login', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -16,7 +16,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     const result = await response.json();
     
     if (result.success) {
-      window.location.href = '/centralofficedashboard';
+      window.location.href = '/studentrepdashboard';
     } else {
       document.getElementById('error').textContent = result.message;
     }

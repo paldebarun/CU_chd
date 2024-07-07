@@ -5,14 +5,18 @@ const {
   getAllStudentRepresentativeUsers,
   createStudentRepresentativeUser,
   updateStudentRepresentativeUser,
-  deleteStudentRepresentativeUser
+  deleteStudentRepresentativeUser,
+  login
 } = require('../controllers/studentRepresentativeControllers');
 
 // Route for fetching all student representative users
 router.get('/getAllUsers', getAllStudentRepresentativeUsers);
 
+
 // Route for creating a student representative user
 router.post('/createUser', centralOfficeMiddleware,createStudentRepresentativeUser);
+
+router.post('/login',login);
 
 // Route for updating a student representative user (using user ID as a parameter)
 router.put('/updateUser/:id',centralOfficeMiddleware, updateStudentRepresentativeUser);

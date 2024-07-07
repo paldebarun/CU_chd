@@ -3,6 +3,7 @@ const Club = require('../model/Club');
 const Ticket = require('../model/Ticket');
 const  {imageUpload} = require('../controllers/UplaodToCloudinary');
 const { findById } = require('../model/centralOfficeUser');
+
 exports.createEvent = async (req, res) => {
   try {
     const { name, description, featured, organizer, dateofevent , seats } = req.body;

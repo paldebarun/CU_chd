@@ -46,6 +46,44 @@ exports.createStudentRepresentativeUser = async (req, res) => {
         message: error.message });
     }
   };
+  exports.login = async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      const user = await StudentRepresentativeUser.findOne({ email });
+  
+      // If the user doesn't exist, send a 404 response
+      if (!user) {
+        return res.status(404).json({ 
+          success: false, 
+          message: "User not found" 
+        });
+      }
+  
+      const isMatch = password==user.password;
+  
+      // If the passwords don't match, send a 401 response
+      if (!isMatch) {
+        return res.status(401).json({ 
+          success: false, 
+          message: "Invalid credentials" 
+        });
+      }
+  
+      res.status(200).json({
+        message: "Login successful",
+        success: true,
+        user
+      });
+    } catch (error) {
+      res.status(500).json({
+        success: false,
+        message: error.message
+      });
+    }
+  };
+  
+  
 
   exports.updateStudentRepresentativeUser = async (req, res) => {
     try {

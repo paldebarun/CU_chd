@@ -6,7 +6,7 @@ const studentRepresentativeMiddleware = require('../middlewares/studentrepresent
 
 const {highlightedEventsRecent,unapprovedEvents,approveEvent ,rejectEvent} = require('../controllers/highlightedEventsRecent');
 // POST /events - Create a new event
-router.post('/events', studentRepresentativeMiddleware,eventController.createEvent);
+router.post('/events',eventController.createEvent);
 
 //REGISTER FOR AN EVENT
 router.post("/register/:id",eventController.register);
