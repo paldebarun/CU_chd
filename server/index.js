@@ -1,12 +1,10 @@
 const express=require('express');
 const app=express();
-
 //configuring the env file
 require('dotenv').config();
 
 //configuring json formate usage
 app.use(express.json());
-
 //file upload configurations
 const fileupload = require("express-fileupload");
 app.use(fileupload({

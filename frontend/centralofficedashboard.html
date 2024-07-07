@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clubs and Events</title>
+    <style>
+        li {
+            margin: 4em;
+        }
+        ul {
+            list-style-type: none;
+        }
+    </style>
+</head>
+<body>
+    <li>
+        <button id="activeclubs">Active clubs</button>
+    </li>
+    <li>
+        <button id="Addclub">Add a club</button>
+    </li>
+   
+    <li>
+        <button id="approvedEvents">Events</button>
+    </li>
+    <div id="lists"></div>
+
+    <div id="createClubForm" style="display: none;">
+        <h2>Create Club</h2>
+        <form id="clubForm">
+            <label for="clubName">Club Name:</label>
+            <input type="text" id="clubName" name="clubName" required><br><br>
+            <label for="studentName">Student Representative Name:</label>
+            <input type="text" id="studentName" name="studentName" required><br><br>
+            <label for="studentEmail">Student Representative Email:</label>
+            <input type="email" id="studentEmail" name="studentEmail" required><br><br>
+            <label for="studentDepartment">Student Representative Department:</label>
+            <input type="text" id="studentDepartment" name="studentDepartment" required><br><br>
+            <button type="submit">Create Club</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('activeclubs').addEventListener('click', async () => {
+            const response = await fetch('http://localhost:8000/api/clubroutes/activeclubs');
+            const data = await response.json();
+            const container = document.getElementById('lists');
+            container.innerHTML = '';  // Clear previous content
+
+            if (data.success) {
+                const ul = document.createElement('ul');
+                data.clubs.forEach(club => {
+                    const li = document.createElement('li');
+                    li.textContent = `Club: ${club.name}`;
+                    ul.appendChild(li);
+
+                    const eventsUl = document.createElement('ul');
+                    const event = club.events;
+                    const eventLi = document.createElement('li');
+                    eventLi.textContent = `Event: ${event.name} on ${new Date(event.dateofevent).toLocaleDateString()}`;
+                    eventsUl.appendChild(eventLi);
+                    
+                    li.appendChild(eventsUl);
+                });
+                container.appendChild(ul);
+            } else {
+                container.textContent = 'Failed to fetch active clubs.';
+            }
+        });
+
+        document.getElementById('Addclub').addEventListener('click', () => {
+            document.getElementById('createClubForm').style.display = 'block';
+        });
+
+        document.getElementById('clubForm').addEventListener('submit', async (event) => {
+            event.preventDefault();
+
+            const clubName = document.getElementById('clubName').value;
+            const studentName = document.getElementById('studentName').value;
+            const studentEmail = document.getElementById('studentEmail').value;
+            const studentDepartment = document.getElementById('studentDepartment').value;
+
+            const response = await fetch('http://localhost:8000/api/clubroutes/clubs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: clubName,
+                    Studentname: studentName,
+                    email: studentEmail,
+                    department: studentDepartment
+                })
+            });
+
+            const data = await response.json();
+            alert(data.message);
+            if (data.success) {
+                document.getElementById('createClubForm').style.display = 'none';
+                document.getElementById('clubForm').reset();
+            }
+        });
+
+        document.getElementById('approvedEvents').addEventListener('click', async () => {
+            const response = await fetch('http://localhost:8000/api/eventroutes/events');
+            const data = await response.json();
+            const container = document.getElementById('lists');
+            container.innerHTML = '';  // Clear previous content
+
+            if (data.success) {
+                const ul = document.createElement('ul');
+                data.events.forEach(event => {
+                    const li = document.createElement('li');
+                    li.textContent = `Event: ${event.name}, Description: ${event.description}, Organizer: ${event.organizer}, Date: ${new Date(event.dateofevent).toLocaleDateString()}`;
+                    ul.appendChild(li);
+                });
+                container.appendChild(ul);
+            } else {
+                container.textContent = 'Failed to fetch approved events.';
+            }
+        });
+    </script>
+</body>
+</html>
