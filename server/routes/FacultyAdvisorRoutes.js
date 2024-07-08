@@ -5,6 +5,7 @@ const studentRepresentativeMiddleware = require('../middlewares/studentrepresent
 // POST /api/faculty-advisors
 router.post('/faculty-advisors', studentRepresentativeMiddleware,facultyAdvisorController.createFacultyAdvisor);
 
+router.post('/login',facultyAdvisorController.login);
 // GET /api/faculty-advisors
 router.get('/faculty-advisors', facultyAdvisorController.getAllFacultyAdvisors);
 

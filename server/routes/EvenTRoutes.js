@@ -18,10 +18,10 @@ router.get('/highlightedEventsRecent',highlightedEventsRecent);
 router.get('/events',eventController.approvedevents);
 
 
-router.get('/unapproved',facultyAdvisorMiddleware,unapprovedEvents);
+router.get('/unapproved',unapprovedEvents);
 
-router.put('/approveEvent/:id',facultyAdvisorMiddleware,approveEvent)
+router.post('/approveEvent/:id',approveEvent)
 
-router.delete('/reject/:id',facultyAdvisorMiddleware,rejectEvent)
+router.delete('/reject/:id',rejectEvent)
 
 module.exports = router;

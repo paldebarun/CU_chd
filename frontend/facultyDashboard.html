@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        li {
+            margin: 1em 0;
+        }
+        ul {
+            list-style-type: none;
+        }
+        .event {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1em;
+            border: 1px solid #ccc;
+        }
+        .event-info {
+            flex: 1;
+        }
+        .event-actions {
+            margin-left: 1em;
+        }
+    </style>
+</head>
+<body>
+    <li>
+        <button id="unapprovedEvents">Events</button>
+    </li>
+    <div id="lists"></div>
+
+    <script>
+        const container = document.getElementById('lists');
+        document.getElementById('unapprovedEvents').addEventListener('click', async () => {
+            try {
+                const response = await fetch('http://localhost:8000/api/eventroutes/unapproved', {
+                    method: 'GET',
+                    credentials: 'include', // Important to include credentials
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const data = await response.json();
+
+                container.innerHTML = '';  // Clear previous content
+
+                if (data.success) {
+                    const ul = document.createElement('ul');
+                    data.eventList.forEach(event => {
+                        const li = document.createElement('li');
+                        li.className = 'event';
+
+                        const eventInfo = document.createElement('div');
+                        eventInfo.className = 'event-info';
+                        eventInfo.textContent = `Event: ${event.name}, Description: ${event.description}, Organizer: ${event.organizer}, Date: ${new Date(event.dateofevent).toLocaleDateString()}`;
+
+                        const eventActions = document.createElement('div');
+                        eventActions.className = 'event-actions';
+
+                        const approveButton = document.createElement('button');
+                        approveButton.textContent = 'Approve';
+                        approveButton.addEventListener('click', async () => {
+                            await handleEventAction(event._id, 'approve');
+                        });
+
+                        const rejectButton = document.createElement('button');
+                        rejectButton.textContent = 'Reject';
+                        rejectButton.addEventListener('click', async () => {
+                            await handleEventAction(event._id, 'reject');
+                        });
+
+                        eventActions.appendChild(approveButton);
+                        eventActions.appendChild(rejectButton);
+
+                        li.appendChild(eventInfo);
+                        li.appendChild(eventActions);
+                        ul.appendChild(li);
+                    });
+                    container.appendChild(ul);
+                } else {
+                    container.textContent = 'Failed to fetch unapproved events.';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                container.textContent = 'An error occurred while fetching events.';
+            }
+        });
+
+        async function handleEventAction(eventId, action) {
+            const url = action === 'approve'
+                ? `http://localhost:8000/api/eventroutes/approveEvent/${eventId}`
+                : `http://localhost:8000/api/eventroutes/reject/${eventId}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Event ${action}d successfully.`);
+                    // Refresh the event list
+                    document.getElementById('unapprovedEvents').click();
+                } else {
+                    alert(`Failed to ${action} the event.`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the event.');
+            }
+        }
+    </script>
+</body>
+</html>

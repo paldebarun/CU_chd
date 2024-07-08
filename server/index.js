@@ -11,6 +11,21 @@ app.use(fileupload({
     useTempFiles : true,
     tempFileDir : '/tmp/'
 }));
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+app.use(cookieParser());
+app.use(session({
+    secret: "cuchd",
+    saveUninitialized: true,
+    resave: true,
+    cookie: {
+        secure: false, // Set to true if using HTTPS
+        httpOnly: true,
+        maxAge: 3600000 // 1 hour
+    }
+}));
+
+
 
 //connecting cloudinary
 const cloudinary = require("./configurations/cloudinaryConnect");
