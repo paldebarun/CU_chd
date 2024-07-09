@@ -5,14 +5,13 @@ exports.highlightedEventsRecent = async (req, res) => {
   try {
     const currDate = new Date();
     const oneWeekLater = new Date();
-    oneWeekLater.setDate(currDate.getDate() + 7);
+    oneWeekLater.setDate(currDate.getDate()-7);
 
     const events = await Event.find({
       featured: true,
       dateofevent: {
-        $gte: currDate,
-        $lte: oneWeekLater
-      },
+        $gte: oneWeekLater
+            },
       approved: true
     });
 
@@ -23,7 +22,8 @@ exports.highlightedEventsRecent = async (req, res) => {
         description: event.description,
         images: event.images,
         clubName: club ? club.name : "Unknown Club",
-        organizer: event.organizer
+        organizer: event.organizer,
+        dateofevent:event.dateofevent
       };
     }));
 
@@ -160,3 +160,51 @@ exports.updateEvent = async (req, res) => {
     });
   }
 };
+
+exports.featureEvent= async (req,res)=>{
+  try{
+  const id = req.params.id;
+  const event = await Event.findByIdAndUpdate(
+    id,
+    { featured: true },
+    { new: true }
+  );
+
+  res.status(201).json({
+    message: "Event approved!!",
+    success: true,
+    event
+  });
+} catch (error) {
+  console.error("Error approving event:", error);
+  res.status(500).json({
+    success: false,
+    message: 'Server error',
+    error
+  });
+}
+};
+
+exports.unfeatureEvent = async(req,res)=>{
+  try{
+    const id = req.params.id;
+    const event = await Event.findByIdAndUpdate(
+      id,
+      { featured: false },
+      { new: true }
+    );
+  
+    res.status(201).json({
+      message: "Event approved!!",
+      success: true,
+      event
+    });
+  } catch (error) {
+    console.error("Error approving event:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Server error',
+      error
+    });
+  }
+  };

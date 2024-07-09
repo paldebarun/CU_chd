@@ -2,7 +2,10 @@ const express=require('express');
 const app=express();
 //configuring the env file
 require('dotenv').config();
+const ipRangeCheck = require('ip-range-check');
+const path = require('path');
 
+const Harshit = '152.58.0.0/16'; 
 //configuring json formate usage
 app.use(express.json());
 //file upload configurations
@@ -38,7 +41,24 @@ app.use(cors({
     credentials : true,
     origin:true
 }));
-
+app.get('/',async(req,res)=>{
+    await fetch("https://api.ipify.org/?format=json")
+    .then(response => response.json())
+    .then(data => {
+        ip = data.ip;
+        console.log(ip); // Log IP address inside the .then() block
+        if (ipRangeCheck(ip, Harshit)) {
+            res.send("login");
+        
+          } else{
+            res.send("Outside");
+        
+          }
+    })
+    .catch(error => {
+        console.log("Error fetching IP address:", error);
+    });
+})
 
 //connnecting our database
 const {databaseConnect} =require('../server/configurations/databaseconnect');

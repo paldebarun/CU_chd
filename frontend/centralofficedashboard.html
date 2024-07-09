@@ -6,10 +6,23 @@
     <title>Clubs and Events</title>
     <style>
         li {
-            margin: 4em;
+            margin: 1em 0;
         }
         ul {
             list-style-type: none;
+        }
+        .event {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1em;
+            border: 1px solid #ccc;
+        }
+        .event-info {
+            flex: 1;
+        }
+        .event-actions {
+            margin-left: 1em;
         }
     </style>
 </head>
@@ -20,7 +33,9 @@
     <li>
         <button id="Addclub">Add a club</button>
     </li>
-   
+   <li>
+    <a href="highlightedEvents.html"><button id="HighlightedEvents">Highlighted events</button></a>
+   </li>
     <li>
         <button id="approvedEvents">Events</button>
     </li>
@@ -42,6 +57,7 @@
     </div>
 
     <script>
+        
         document.getElementById('activeclubs').addEventListener('click', async () => {
             const response = await fetch('http://localhost:8000/api/clubroutes/activeclubs');
             const data = await response.json();
@@ -109,17 +125,83 @@
             container.innerHTML = '';  // Clear previous content
 
             if (data.success) {
-                const ul = document.createElement('ul');
-                data.events.forEach(event => {
-                    const li = document.createElement('li');
-                    li.textContent = `Event: ${event.name}, Description: ${event.description}, Organizer: ${event.organizer}, Date: ${new Date(event.dateofevent).toLocaleDateString()}`;
-                    ul.appendChild(li);
+                    const ul = document.createElement('ul');
+                    data.events.forEach(event => {
+                        const li = document.createElement('li');
+                        li.className = 'event';
+
+                        const eventInfo = document.createElement('div');
+                        eventInfo.className = 'event-info';
+                        eventInfo.textContent = `Event: ${event.name}, Description: ${event.description}, Organizer: ${event.organizer}, Date: ${new Date(event.dateofevent).toLocaleDateString()}`;
+
+                        const eventActions = document.createElement('div');
+                        eventActions.className = 'event-actions';
+                        if(!event.featured){
+                        const featureButton = document.createElement('button');
+                        featureButton.textContent = 'Feature';
+                        featureButton.addEventListener('click', async () => {
+                            await handleEventAction(event._id, 'feature');
+                        });
+
+                       
+
+                        eventActions.appendChild(featureButton);
+                    }
+                    else{
+                        const unfeatureButton = document.createElement('button');
+                        unfeatureButton.textContent = 'Remove feature';
+                        unfeatureButton.addEventListener('click', async () => {
+                            await handleEventAction(event._id, 'unfeature');
+                        });
+
+                       
+
+                        eventActions.appendChild(unfeatureButton);
+                    }
+
+                        li.appendChild(eventInfo);
+                        li.appendChild(eventActions);
+                        ul.appendChild(li);
+                    });
+                    container.appendChild(ul);
+                } else {
+                    container.textContent = 'Failed to fetch approved events.';
+                }
+            } 
+        );
+
+        async function handleEventAction(eventId, action) {
+            const url = action === 'feature'
+                ? `http://localhost:8000/api/eventroutes/featureEvent/${eventId}`
+                : `http://localhost:8000/api/eventroutes/unfeatureEvent/${eventId}`;
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 });
-                container.appendChild(ul);
-            } else {
-                container.textContent = 'Failed to fetch approved events.';
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(`Event ${action}d successfully.`);
+                    // Refresh the event list
+                    document.getElementById('approvedEvents').click();
+                } else {
+                    alert(`Failed to ${action} the event.`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred while processing the event.');
             }
-        });
+        }
     </script>
 </body>
 </html>

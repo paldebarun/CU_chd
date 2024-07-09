@@ -4,7 +4,7 @@ const eventController = require('../controllers/EventControllers');
 const facultyAdvisorMiddleware = require('../middlewares/facultyadvisor');
 const studentRepresentativeMiddleware = require('../middlewares/studentrepresentative');
 
-const {highlightedEventsRecent,unapprovedEvents,approveEvent ,rejectEvent} = require('../controllers/highlightedEventsRecent');
+const {highlightedEventsRecent,unapprovedEvents,approveEvent ,rejectEvent,featureEvent,unfeatureEvent} = require('../controllers/highlightedEventsRecent');
 // POST /events - Create a new event
 router.post('/events',eventController.createEvent);
 
@@ -22,6 +22,9 @@ router.get('/unapproved',unapprovedEvents);
 
 router.post('/approveEvent/:id',approveEvent)
 
-router.delete('/reject/:id',rejectEvent)
+router.post('/reject/:id',rejectEvent)
+
+router.post('/featureEvent/:id',featureEvent)
+router.post('/unfeatureEvent/:id',unfeatureEvent);
 
 module.exports = router;

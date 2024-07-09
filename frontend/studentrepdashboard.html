@@ -41,8 +41,6 @@
       <input type="text" id="eventName" name="eventName" required><br><br>
       <label for="eventDescription">Description:</label>
       <input type="text" id="eventDescription" name="eventDescription" required><br><br>
-      <label for="eventFeatured">Featured:</label>
-      <input type="checkbox" id="eventFeatured" name="eventFeatured"><br><br>
       <label for="eventOrganizer">Organizer:</label>
       <input type="text" id="eventOrganizer" name="eventOrganizer" required><br><br>
       <label for="eventDate">Date of Event:</label>
@@ -103,7 +101,7 @@
       const formData = new FormData();
       formData.append('name', document.getElementById('eventName').value);
       formData.append('description', document.getElementById('eventDescription').value);
-      formData.append('featured', document.getElementById('eventFeatured').checked);
+      formData.append('featured', false);
       formData.append('organizer', document.getElementById('eventOrganizer').value);
       formData.append('dateofevent', document.getElementById('eventDate').value);
       formData.append('seats', document.getElementById('eventSeats').value);
